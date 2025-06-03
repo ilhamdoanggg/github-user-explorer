@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useDebounce } from "@/hooks/useDebounce";
 import clsx from "clsx";
 import { Skeleton } from "@/components/ui/skeleton";
+import { baseUrl } from "./lib/utils";
 
 type User = { login: string };
 type Repo = { id: number; name: string; description: string; stargazers_count: number; html_url: string };
@@ -53,7 +54,7 @@ export default function App() {
     setReposMap({});
     setSearchTime(null);
     try {
-      const res = await axios.get(`/api/search/users?q=${query}&per_page=10`);
+      const res = await axios.get(`${baseUrl}/search/users?q=${query}&per_page=10`);
       setUsers(res.data.items || []);
       setTotalCount(res.data.total_count ?? 0);
       setSearchTime(performance.now() - start);
@@ -68,7 +69,7 @@ export default function App() {
     if (reposMap[userLogin]) return;
     setLoadingRepos(userLogin);
     try {
-      const res = await axios.get(`/api/users/${userLogin}/repos`);
+      const res = await axios.get(`${baseUrl}/users/${userLogin}/repos`);
       setReposMap(prev => ({ ...prev, [userLogin]: res.data }));
     } catch {
       setError("Failed to fetch repositories.");
